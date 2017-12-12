@@ -1,1 +1,1 @@
-export { SyncPromise } from './SyncPromise'
+export { SyncPromise } from './SyncPromise';
