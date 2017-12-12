@@ -1,0 +1,24 @@
+{
+   "name": "syncasync",
+   "version": "0.3.1",
+   "description": "syncasync",
+   "main": "lib/index.js",
+   "types": "./lib/index.d.ts",
+   "scripts": {
+      "postinstall": "npm run build",
+      "build": "tsc",
+      "start": "node ./lib/index.js",
+      "test": "npm run build && mocha ./lib/tests/index.js",
+      "devtest": "mocha ./lib/tests/index.js"
+   },
+   "author": "Silvestr Baibuz",
+   "license": "ISC",
+   "devDependencies": {
+      "@types/chai": "^4.0.4",
+      "@types/mocha": "^2.2.42",
+      "@types/node": "^8.0.7",
+      "chai": "^4.1.1",
+      "mocha": "^3.5.0",
+      "typescript": "^2.6.1"
+   }
+}

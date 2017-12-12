@@ -1,0 +1,26 @@
+{
+   "compilerOptions": {
+      "strict": true,
+      "allowJs": false,
+      "allowUnreachableCode": false,
+      "forceConsistentCasingInFileNames": true,
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "noImplicitUseStrict": false,
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "target": "es6",
+      "rootDir": "src",
+      "outDir": "lib",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "declaration": true
+   },
+   "exclude": [
+      "node_modules",
+      "lib"
+   ]
+}
