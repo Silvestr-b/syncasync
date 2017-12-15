@@ -157,6 +157,9 @@ class SyncPromise<T> implements Promise<T> {
    }
 
    static resolve<T>(value: T | Promise<T>) {
+      if(SyncPromise.isSyncPromise(value) || SyncPromise.isRealPromise(value)){
+         return <Promise<T>>value
+      }
       return new SyncPromise<T>((resolve, reject) => resolve(value))
    }
 
