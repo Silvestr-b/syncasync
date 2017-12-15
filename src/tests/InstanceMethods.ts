@@ -2,11 +2,14 @@ import { expect } from 'chai'
 import { SyncPromise } from '../SyncPromise'
 import { isRealPromise, isSyncPromise } from './utils'
 
+function bdd(name: string, given: string, when: string, then: string) {
+   return name + '\n' + 'GIVEN: ' + given + '\n' + 'WHEN: ' + when + '\n' + 'THEN: ' + then
+}
 
 describe('InstanceMethods', () => {
    describe('Create and resolve', () => {
 
-      it('resolve with value', (done) => {
+      it('Should call "onfulfilled" with value when resolved with value', (done) => {
          const promise = new SyncPromise<number>((resolve, reject) => {
             resolve(5)
          }).then(result => {
@@ -16,27 +19,27 @@ describe('InstanceMethods', () => {
          promise.then(() => done())
       })
 
-      it('resolve with resolved Promise', (done) => {
+      it('Should call "onfulfilled" with value of Promise when resolved with resolved Promise', (done) => {
          const promise = new SyncPromise<number>((resolve, reject) => {
             resolve(Promise.resolve(5))
          }).then(result => {
             expect(result).to.be.equal(5)
-            done()
          })
          expect(isRealPromise(promise)).to.be.true
+         promise.then(() => done())
       })
 
-      it('resolve with rejected Promise', (done) => {
+      it('Should call "onrejected" with value of Promise when resolved with rejected Promise', (done) => {
          const promise = new SyncPromise<number>((resolve, reject) => {
             resolve(Promise.reject(5))
          }).then(null, err => {
             expect(err).to.be.equal(5)
-            done()
          })
          expect(isRealPromise(promise)).to.be.true
+         promise.then(() => done())
       })
 
-      it('resolve with resolved SyncPromise', (done) => {
+      it('Should call "onfulfilled" with value of SyncPromise when resolved with resolved SyncPromise', (done) => {
          const promise = new SyncPromise<number>((resolve, reject) => {
             resolve(SyncPromise.resolve(5))
          }).then(result => {
@@ -46,7 +49,7 @@ describe('InstanceMethods', () => {
          promise.then(() => done())
       })
 
-      it('resolve with rejected SyncPromise', (done) => {
+      it('Should call "onrejected" with value of SyncPromise when resolved with rejected SyncPromise', (done) => {
          const promise = new SyncPromise<number>((resolve, reject) => {
             resolve(SyncPromise.reject(5))
          }).then(null, err => {
