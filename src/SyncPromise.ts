@@ -121,9 +121,10 @@ class SyncPromise<T> implements Promise<T> {
    static all<T1, T2, T3>(values: [Promise<T1> | T1, Promise<T2> | T2, Promise<T3> | T3]): Promise<[T1, T2, T3]>;
    static all<T1, T2>(values: [Promise<T1> | T1, Promise<T2> | T2]): Promise<[T1, T2]>;
    static all<T1>(values: [Promise<T1> | T1]): Promise<[T1]>;
+   static all(values: any[]): Promise<any[]>;
 
    // Default realization
-   static all<T1, T2, T3, T4, T5, T6>(values: any[]): Promise<any[]> {
+   static all(values: any[]): Promise<any[]> {
       const promisifiedValues: Promise<any>[] = [];
       let hasRealPromise = false;
 
