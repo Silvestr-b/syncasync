@@ -23,7 +23,7 @@ describe('StaticMethods', () => {
             .then(result => {
                expect(result).to.be.eql([5])
             })
-            .then(done)
+            .then(() => done())
       })
 
       it('When passed array with resolved SyncPromise, should be resolved with array which has value of that SyncPromise', done => {
@@ -31,7 +31,7 @@ describe('StaticMethods', () => {
             .then(result => {
                expect(result).to.be.eql([1, 5, 10])
             })
-            .then(done)
+            .then(() => done())
       })
 
       it('When passed array with rejected SyncPromise, should be rejected with value of that SyncPromise', done => {
@@ -39,7 +39,7 @@ describe('StaticMethods', () => {
             .then(null, err => {
                expect(err).to.be.eql(5)
             })
-            .then(done)
+            .then(() => done())
       })
 
       it('When passed array with resolved Promise, should be resolved with array which has value of that Promise', done => {
@@ -47,7 +47,7 @@ describe('StaticMethods', () => {
             .then(result => {
                expect(result).to.be.eql([1, 5, 10])
             })
-            .then(done)
+            .then(() => done())
       })
 
       it('When passed array with rejected Promise, should be rejected with value of that Promise', done => {
@@ -55,7 +55,7 @@ describe('StaticMethods', () => {
             .then(null, err => {
                expect(err).to.be.eql(5)
             })
-            .then(done)
+            .then(() => done())
       })
 
       it('When passed array with many any type items, should be resolved with array which has that values and values of Promises', done => {
@@ -64,56 +64,65 @@ describe('StaticMethods', () => {
             .then(result => {
                expect(result).to.be.eql(['FakeString', null, 10, fakeArray, fakeObject, 5, 10])
             })
-            .then(done)
+            .then(() => done())
       })
 
    })
 
    describe('.resolve', () => {
-      it('with Value', (done) => {
-         const promise = SyncPromise.resolve(5)
-            .then(result => {
-               expect(result).to.be.eql(5)
-               done()
-            })
+
+      it('When passed value is not a Promise, should return SyncPromise', done => {
+         const promise = SyncPromise.resolve('FakeString')
          expect(isSyncPromise(promise)).to.be.true
+         promise.then(() => done())
       })
 
-      it('with resolved Promise', (done) => {
-         const promise = SyncPromise.resolve(Promise.resolve(5))
+      it('When passed value is Promise, should return Promise', done => {
+         const promise = SyncPromise.resolve(Promise.resolve(10))
+         expect(isRealPromise(promise)).to.be.true
+         promise.then(() => done())
+      })
+
+      it('When passed value, should be resolved with that value', done => {
+         SyncPromise.resolve(5)
             .then(result => {
                expect(result).to.be.eql(5)
-               done()
             })
-         expect(isRealPromise(promise)).to.be.true
+            .then(() => done())
       })
 
-      it('with rejected Promise', (done) => {
-         const promise = SyncPromise.resolve(Promise.reject(5))
+      it('When passed resolved Promise, should be resolved with value of that Promise', done => {
+         SyncPromise.resolve(Promise.resolve(5))
+            .then(result => {
+               expect(result).to.be.eql(5)
+            })
+            .then(() => done())
+      })
+
+      it('When passed rejected Promise, should be rejected with value of that Promise', done => {
+         SyncPromise.resolve(Promise.reject(5))
             .then(null, err => {
                expect(err).to.be.eql(5)
-               done()
             })
-         expect(isRealPromise(promise)).to.be.true
+            .then(() => done())
       })
 
-      it('with resolved SyncPromise', (done) => {
-         const promise = SyncPromise.resolve(SyncPromise.resolve(5))
+      it('When passed resolved SyncPromise, should be resolved with value of that SyncPromise', done => {
+         SyncPromise.resolve(SyncPromise.resolve(5))
             .then(result => {
                expect(result).to.be.eql(5)
-               done()
             })
-         expect(isSyncPromise(promise)).to.be.true
+            .then(() => done())
       })
 
-      it('with rejected SyncPromise', (done) => {
-         const promise = SyncPromise.resolve(SyncPromise.reject(5))
+      it('When passed rejected SyncPromise, should be rejected with value of that SyncPromise', done => {
+         SyncPromise.resolve(SyncPromise.reject(5))
             .then(null, err => {
                expect(err).to.be.eql(5)
-               done()
             })
-         expect(isSyncPromise(promise)).to.be.true
+            .then(() => done())
       })
+      
    })
 
    describe('.reject', () => {
