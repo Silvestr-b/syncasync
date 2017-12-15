@@ -164,6 +164,9 @@ class SyncPromise<T> implements Promise<T> {
    }
 
    static reject<T>(reason: T | Promise<T>) {
+      if(SyncPromise.isRealPromise(reason)){
+         return Promise.reject(reason)
+      }
       return new SyncPromise<T>((resolve, reject) => reject(reason))
    }
 
