@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { SyncPromise } from '../SyncPromise'
-import { isSyncPromise, isRealPromise } from './utils'
 
 
 describe('StaticMethods', () => {
@@ -8,13 +7,13 @@ describe('StaticMethods', () => {
 
       it('When passed array do not has Promise, should return SyncPromise', done => {
          const promise = SyncPromise.all(['FakeString', null, 10, SyncPromise.resolve(5)])
-         expect(isSyncPromise(promise)).to.be.true
+         expect(promise).to.be.instanceof(SyncPromise)
          promise.then(() => done())
       })
 
       it('When passed array has Promise, should return Promise', done => {
          const promise = SyncPromise.all(['FakeString', null, 10, SyncPromise.resolve(5), Promise.resolve(10)])
-         expect(isRealPromise(promise)).to.be.true
+         expect(promise).to.be.instanceof(Promise)
          promise.then(() => done())
       })
 
@@ -73,13 +72,13 @@ describe('StaticMethods', () => {
 
       it('When passed value is not a Promise, should return SyncPromise', done => {
          const promise = SyncPromise.resolve('FakeString')
-         expect(isSyncPromise(promise)).to.be.true
+         expect(promise).to.be.instanceof(SyncPromise)
          promise.then(() => done())
       })
 
       it('When passed value is Promise, should return Promise', done => {
          const promise = SyncPromise.resolve(Promise.resolve(10))
-         expect(isRealPromise(promise)).to.be.true
+         expect(promise).to.be.instanceof(Promise)
          promise.then(() => done())
       })
 
@@ -129,13 +128,13 @@ describe('StaticMethods', () => {
 
       it('When passed value is not a Promise, should return SyncPromise', done => {
          const promise = SyncPromise.reject('FakeString')
-         expect(isSyncPromise(promise)).to.be.true
+         expect(promise).to.be.instanceof(SyncPromise)
          promise.then(null, () => done())
       })
 
       it('When passed value is Promise, should return Promise', done => {
          const promise = SyncPromise.reject(Promise.resolve(10))
-         expect(isRealPromise(promise)).to.be.true
+         expect(promise).to.be.instanceof(Promise)
          promise.then(null, () => done())
       })
 

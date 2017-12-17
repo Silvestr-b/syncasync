@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import * as sinon from 'sinon'
 import { SyncPromise } from '../SyncPromise'
-import { isRealPromise, isSyncPromise } from './utils'
 
 
 describe('InstanceMethods', () => {
