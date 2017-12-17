@@ -7,9 +7,11 @@ import { isRealPromise, isSyncPromise } from './utils'
 describe('InstanceMethods', () => {
    describe('.then', () => {
       let spy: sinon.SinonSpy;
+      let notCallableSpy: sinon.SinonSpy
 
       beforeEach(() => {
          spy = sinon.spy();
+         notCallableSpy = sinon.spy();
       })
 
       describe('by resolved', () => {
@@ -18,8 +20,11 @@ describe('InstanceMethods', () => {
             new SyncPromise<number>((resolve, reject) => {
                resolve(5)
             })
-               .then(spy)
-               .then(() => expect(spy.calledWith(5)).to.be.true)
+               .then(spy, notCallableSpy)
+               .then(() => {
+                  expect(spy.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
@@ -27,8 +32,11 @@ describe('InstanceMethods', () => {
             new SyncPromise<number>((resolve, reject) => {
                resolve(Promise.resolve(5))
             })
-               .then(spy)
-               .then(() => expect(spy.calledWith(5)).to.be.true)
+               .then(spy, notCallableSpy)
+               .then(() => {
+                  expect(spy.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
@@ -36,8 +44,11 @@ describe('InstanceMethods', () => {
             new SyncPromise<number>((resolve, reject) => {
                resolve(Promise.reject(5))
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(5)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
@@ -45,8 +56,11 @@ describe('InstanceMethods', () => {
             new SyncPromise<number>((resolve, reject) => {
                resolve(SyncPromise.resolve(5))
             })
-               .then(spy)
-               .then(() => expect(spy.calledWith(5)).to.be.true)
+               .then(spy, notCallableSpy)
+               .then(() => {
+                  expect(spy.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
@@ -54,62 +68,96 @@ describe('InstanceMethods', () => {
             new SyncPromise<number>((resolve, reject) => {
                resolve(SyncPromise.reject(5))
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(5)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
       })
 
       describe('by rejected', () => {
 
-         it('reject with value', done => {
+         it('When rejected with value, should call "onrejected" with that value', done => {
             new SyncPromise<number>((resolve, reject) => {
                reject(5)
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(5)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
-         it('reject with resolved Promise', done => {
+         it('When rejected with resolved Promise, should call "onrejected" with that Promise', done => {
             const resolvedPromise = Promise.resolve(5);
             new SyncPromise<number>((resolve, reject) => {
                reject(resolvedPromise)
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(resolvedPromise)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(resolvedPromise)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
-         it('reject with rejected Promise', done => {
+         it('When rejected with rejected Promise, should call "onrejected" with that Promise', done => {
             const spy = sinon.spy((err: Promise<any>) => err.catch(err => err));
             const rejectedPromise = Promise.reject(5);
             new SyncPromise<number>((resolve, reject) => {
                reject(rejectedPromise)
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(rejectedPromise)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(rejectedPromise)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
-         it('reject with resolved SyncPromise', done => {
+         it('When rejected with resolved SyncPromise, should call "onrejected" with that SyncPromise', done => {
             const resolvedSyncPromise = SyncPromise.resolve(5);
             new SyncPromise<number>((resolve, reject) => {
                reject(resolvedSyncPromise)
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(resolvedSyncPromise)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(resolvedSyncPromise)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
-         it('reject with rejected SyncPromise', done => {
+         it('When rejected with rejected SyncPromise, should call "onrejected" with that SyncPromise', done => {
             const spy = sinon.spy((err: Promise<any>) => err.catch(err => err));
             const rejectedSyncPromise = SyncPromise.reject(5);
             new SyncPromise<number>((resolve, reject) => {
                reject(rejectedSyncPromise)
             })
-               .then(null, spy)
-               .then(() => expect(spy.calledWith(rejectedSyncPromise)).to.be.true)
+               .then(notCallableSpy, spy)
+               .then(() => {
+                  expect(spy.calledWith(rejectedSyncPromise)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
+               .then(() => done())
+         })
+
+      })
+
+      describe('by throwed', () => {
+
+         it('When executor throw something, should call "onrejected" with that', done => {
+            new SyncPromise<number>((resolve, reject) => {
+               throw 'FakeError'
+            })
+               .then(notCallableSpy, spy)
+               .then(result => {
+                  expect(spy.calledWith('FakeError')).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
+               })
                .then(() => done())
          })
 
@@ -117,18 +165,24 @@ describe('InstanceMethods', () => {
 
    })
 
+
+
+
+
+
+
    describe('fluent interface', () => {
+      let spy1: sinon.SinonSpy;
+      let spy2: sinon.SinonSpy;
+      let notCallableSpy: sinon.SinonSpy
+
+      beforeEach(() => {
+         spy1 = sinon.spy((res: any) => res);
+         spy2 = sinon.spy((res: any) => res);
+         notCallableSpy = sinon.spy();
+      })
+
       describe('chain from resolved', () => {
-         let spy1: sinon.SinonSpy;
-         let spy2: sinon.SinonSpy;
-         let notCallableSpy: sinon.SinonSpy
-
-         beforeEach(() => {
-            spy1 = sinon.spy((res: any) => res);
-            spy2 = sinon.spy((res: any) => res);
-            notCallableSpy = sinon.spy();
-         })
-
          describe('pass result', () => {
 
             it('without error callbacks', done => {
@@ -144,8 +198,8 @@ describe('InstanceMethods', () => {
                   .then(() => done())
             })
 
-            it('with error callbacks', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
+            it('with error callbacks', done => {
+               new SyncPromise<number>((resolve, reject) => {
                   resolve(5)
                })
                   .then(spy1, notCallableSpy)
@@ -158,44 +212,49 @@ describe('InstanceMethods', () => {
                   .then(() => done())
             })
 
-            it('with catch', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
+            it('with catch', done => {
+               new SyncPromise<number>((resolve, reject) => {
                   resolve(5)
                })
-                  .catch(err => err)
-                  .catch(err => err)
-                  .then(result => {
-                     expect(result).to.be.equal(5)
+                  .catch(notCallableSpy)
+                  .catch(notCallableSpy)
+                  .then(spy1, notCallableSpy)
+                  .then(() => {
+                     expect(spy1.calledWith(5)).to.be.true
+                     expect(notCallableSpy.notCalled).to.be.true
                   })
-               expect(isSyncPromise(promise)).to.be.true
-               promise.then(() => done())
+                  .then(() => done())
             })
 
-            it('with catch and error callbacks', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
+            it('with catch and error callbacks', done => {
+               new SyncPromise<number>((resolve, reject) => {
                   resolve(5)
                })
-                  .then(result => result, err => err)
-                  .catch(err => err)
-                  .catch(err => err)
+                  .then(spy1, notCallableSpy)
+                  .catch(notCallableSpy)
+                  .catch(notCallableSpy)
+                  .then(spy2, notCallableSpy)
                   .then(result => {
-                     expect(result).to.be.equal(5)
+                     expect(spy1.calledWith(5)).to.be.true
+                     expect(spy2.calledWith(5)).to.be.true
+                     expect(notCallableSpy.notCalled).to.be.true
                   })
-               expect(isSyncPromise(promise)).to.be.true
-               promise.then(() => done())
+                  .then(() => done())
             })
 
-            it('with null as success callback', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
+            it('with null as success callback', done => {
+               new SyncPromise<number>((resolve, reject) => {
                   resolve(5)
                })
-                  .then(result => result, err => err)
-                  .then(null, err => err)
+                  .then(spy1, notCallableSpy)
+                  .then(null, notCallableSpy)
+                  .then(spy2, notCallableSpy)
                   .then(result => {
-                     expect(result).to.be.equal(5)
+                     expect(spy1.calledWith(5)).to.be.true
+                     expect(spy2.calledWith(5)).to.be.true
+                     expect(notCallableSpy.notCalled).to.be.true
                   })
-               expect(isSyncPromise(promise)).to.be.true
-               promise.then(() => done())
+                  .then(() => done())
             })
 
          })
@@ -203,49 +262,27 @@ describe('InstanceMethods', () => {
       })
 
       describe('chain from rejected', () => {
-         describe('pass error', () => {
-            it('without success callbacks', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
-                  reject(5)
-               })
-                  .then(null, err => {
-                     expect(err).to.be.equal(5)
-                  })
-               expect(isSyncPromise(promise)).to.be.true
-               promise.then(() => done())
-            })
 
-            it('with success callbacks', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
-                  reject(5)
-               })
-                  .then(result => result)
-                  .then(result => result)
-                  .then(null, err => {
-                     // Он не вызывает это!
-                     expect(err).to.be.equal(5)
-                  })
-               expect(isSyncPromise(promise)).to.be.true
-               promise.then(() => done())
+         it('When "onrejected" return something, should call next "onfulfilled" with that', done => {
+            const promise = new SyncPromise<number>((resolve, reject) => {
+               reject(5)
             })
-
-            it('with catch', (done) => {
-               const promise = new SyncPromise<number>((resolve, reject) => {
-                  reject(5)
+               .then(notCallableSpy, spy1)
+               .then(spy2, notCallableSpy)
+               .then(result => {
+                  expect(spy1.calledWith(5)).to.be.true
+                  expect(spy2.calledWith(5)).to.be.true
+                  expect(notCallableSpy.notCalled).to.be.true
                })
-                  .then(result => result)
-                  .then(result => result)
-                  .catch(err => {
-                     expect(err).to.be.equal(5)
-                  })
-               expect(isSyncPromise(promise)).to.be.true
-               promise.then(() => done())
-            })
+               .then(() => done())
          })
+
       })
 
       describe('chain with throws', () => {
          describe('without real Promises', () => {
+
+
 
             it('at the start', (done) => {
                const promise = new SyncPromise<number>((resolve, reject) => {
