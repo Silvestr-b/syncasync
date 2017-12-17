@@ -5,7 +5,7 @@ import { SyncPromise } from '../SyncPromise'
 
 describe('InstanceMethods', () => {
 
-   describe('.executor', () => {
+   describe('Sync vs Async', () => {
 
       it('When resolved with value, should return SyncPromise', () => {
          const promise = new SyncPromise<number>((resolve, reject) => {
@@ -79,6 +79,27 @@ describe('InstanceMethods', () => {
          expect(promise).instanceof(SyncPromise)
       })
 
+      it('When one of "onfulfiled" callbacks in chain returns Promise, should return Promise', () => {
+         const promise = new SyncPromise<number>((resolve, reject) => {
+            resolve(5)
+         })
+            .then(res => res, err => err)
+            .then(res => Promise.resolve(5), err => err)
+            .then(res => res, err => err)
+
+         expect(promise).instanceof(Promise)
+      })
+
+      it('When one of "onrejected" callbacks in chain returns Promise, should return Promise', () => {
+         const promise = new SyncPromise<number>((resolve, reject) => {
+            reject(5)
+         })
+            .then(res => res, err => Promise.resolve(5))
+            .then(res => res, err => err)
+
+         expect(promise).instanceof(Promise)
+      })
+
    })
 
    describe('.then', () => {
@@ -91,7 +112,7 @@ describe('InstanceMethods', () => {
       })
 
       describe('by resolved', () => {
-         
+
          it('When is resolved with value, should pass that value to next "onfulfilled"', done => {
             new SyncPromise<number>((resolve, reject) => {
                resolve(5)
