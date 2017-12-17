@@ -87,7 +87,11 @@ class SyncPromise<T> implements Promise<T> {
          }
 
          try {
-            return SyncPromise.resolve(onrejected ? onrejected(<T>this.result) : <any>this.result)
+            if(onrejected){
+               return SyncPromise.resolve(<any>onrejected(<T>this.result))
+            } else {
+               return SyncPromise.reject(<any>this.result)
+            }
          } catch (err) {
             return SyncPromise.reject(err)
          }
