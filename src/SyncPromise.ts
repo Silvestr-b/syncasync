@@ -179,6 +179,10 @@ class SyncPromise<T> implements Promise<T> {
       return new SyncPromise<T>((resolve, reject) => reject(reason))
    }
 
+   static isPromise(value: any) {
+      return value && value.then && typeof value.then === 'function'
+   }
+   
    static isRealPromise(value: any) {
       return value && value.then && typeof value.then === 'function' && !(value instanceof SyncPromise)
    }
