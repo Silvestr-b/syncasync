@@ -87,7 +87,7 @@ class SyncPromise<T> implements Promise<T> {
          }
 
          try {
-            if(onrejected){
+            if (onrejected) {
                return SyncPromise.resolve(<any>onrejected(<T>this.result))
             } else {
                return SyncPromise.reject(<any>this.result)
@@ -107,13 +107,13 @@ class SyncPromise<T> implements Promise<T> {
 
 
    private resolve = (result: T | Promise<T>) => {
-      if(this.state !== STATES.PENDING) return
+      if (this.state !== STATES.PENDING) return
       this.state = STATES.RESOLVED;
       this.result = result;
    }
 
    private reject = (reason: T | Promise<T>) => {
-      if(this.state !== STATES.PENDING) return
+      if (this.state !== STATES.PENDING) return
       this.state = STATES.REJECTED;
       this.result = reason;
    }
@@ -129,63 +129,65 @@ class SyncPromise<T> implements Promise<T> {
 
    // Default realization
    static all(values: any[]): Promise<any[]> {
-      const promisifiedValues: Promise<any>[] = [];
-      let hasRealPromise = false;
+      const promises: Promise<any>[] = [];
+      const results: any[] = [];   
 
       for (let i = 0; i < values.length; i++) {
          const value = values[i];
-         const promisifiedValue = SyncPromise.promisifyValue(value);
 
-         if (SyncPromise.isRealPromise(promisifiedValue)) {
-            hasRealPromise = true
+         if (SyncPromise.isSyncPromise(value) || SyncPromise.isRealPromise(value)) {
+            if (value instanceof SyncPromise) {
+               if (value.state === "RESOLVED") {
+                  results[i] = value.result
+               }
+               if (value.state === "REJECTED") {
+                  return SyncPromise.reject(value.result)
+               }
+            } else {
+               value.then((result: any) => {
+                  results[i] = result;
+               }, (err: any) => {
+                  promises.push(SyncPromise.reject(err));
+               });
+
+               promises.push(value);
+            }
+
+         } else {
+            results[i] = value
          }
-
-         promisifiedValues.push(promisifiedValue)
       }
 
-      if (hasRealPromise) {
-         return Promise.all(promisifiedValues)
+      if (promises.length > 0) {
+         return Promise.all(promises).then(() => results)
       } else {
-         return new SyncPromise((resolve, reject) => {
-            const results: any[] = [];
-            for(let i=0; i<promisifiedValues.length; i++){
-               promisifiedValues[i].then(result => {
-                  results.push(result)
-               }, err => { 
-                  return reject(err)
-               })
-            }
-            resolve(results)
-         })         
+         return SyncPromise.resolve(results)
       }
    }
 
    static resolve<T>(value: T | Promise<T>) {
-      if(SyncPromise.isSyncPromise(value) || SyncPromise.isRealPromise(value)){
+      if (SyncPromise.isSyncPromise(value) || SyncPromise.isRealPromise(value)) {
          return <Promise<T>>value
       }
       return new SyncPromise<T>((resolve, reject) => resolve(value))
    }
 
    static reject<T>(reason: T | Promise<T>) {
-      if(SyncPromise.isRealPromise(reason)){
+      if (SyncPromise.isRealPromise(reason)) {
          return <Promise<T>>Promise.reject(reason)
       }
       return new SyncPromise<T>((resolve, reject) => reject(reason))
    }
 
-   private static promisifyValue<T>(value: Promise<T> | T): Promise<T> {
-      if (SyncPromise.isSyncPromise(value) || SyncPromise.isRealPromise(value)) {
-         return <Promise<T>>value
-      }
-      return SyncPromise.resolve(value)
+   static isPromise(value: any) {
+      return value && value.then && typeof value.then === 'function'
    }
 
-   private static isRealPromise(value: any) {
+   static isRealPromise(value: any) {
       return value && value.then && typeof value.then === 'function' && !(value instanceof SyncPromise)
    }
 
-   private static isSyncPromise(value: any) {
+   static isSyncPromise(value: any) {
       return value instanceof SyncPromise
    }
 
