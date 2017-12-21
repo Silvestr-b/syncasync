@@ -179,11 +179,11 @@ class SyncPromise<T> implements Promise<T> {
       return new SyncPromise<T>((resolve, reject) => reject(reason))
    }
 
-   private static isRealPromise(value: any) {
+   static isRealPromise(value: any) {
       return value && value.then && typeof value.then === 'function' && !(value instanceof SyncPromise)
    }
 
-   private static isSyncPromise(value: any) {
+   static isSyncPromise(value: any) {
       return value instanceof SyncPromise
    }
 
