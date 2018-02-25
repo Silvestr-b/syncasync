@@ -1,6 +1,6 @@
 {
    "name": "syncasync",
-   "version": "0.3.1",
+   "version": "0.3.2",
    "description": "syncasync",
    "main": "lib/index.js",
    "types": "./lib/index.d.ts",
@@ -13,16 +13,16 @@
    },
    "author": "Silvestr Baibuz",
    "license": "ISC",
-   "devDependencies": {   
-      "chai": "^4.1.1",
-      "mocha": "^3.5.0",
-      "sinon": "^4.1.3"
+   "devDependencies": {
+      "chai": "^4.1.2",
+      "mocha": "^5.0.1",
+      "sinon": "^4.4.2"
    },
    "dependencies": {
-      "@types/chai": "^4.0.4",
-      "@types/mocha": "^2.2.42",
-      "@types/node": "^8.0.7",
-      "@types/sinon": "^4.1.2",
-      "typescript": "^2.6.2"
+      "@types/chai": "^4.1.2",
+      "@types/mocha": "^2.2.48",
+      "@types/node": "^9.4.6",
+      "@types/sinon": "^4.1.3",
+      "typescript": "^2.7.2"
    }
 }
