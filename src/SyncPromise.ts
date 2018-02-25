@@ -17,8 +17,8 @@ class SyncPromise<T> implements Promise<T> {
 
    readonly [Symbol.toStringTag]: 'Promise';
    private state: STATES = STATES.PENDING;
-   private result: T | Promise<T>;
-   private resultType: RESULT_TYPES;
+   private result!: T | Promise<T>;
+   private resultType!: RESULT_TYPES;
    private isSyncPromise = true;
 
    constructor(
